@@ -1,0 +1,99 @@
+name: Newtonium
+
+entities:
+  User:
+    authenticable: true
+    properties:
+      - name
+      - name: email
+        type: email
+      - name: role
+        type: choice
+        options:
+          values: [admin, contributor]
+        default: contributor
+    policies:
+      create:
+        - access: admin
+      read:
+        - access: restricted
+          allow: User
+          condition: self
+      update:
+        - access: restricted
+          allow: User
+          condition: self
+      delete:
+        - access: admin
+      signup:
+        - access: public
+
+  Discovery:
+    properties:
+      - name: title
+        type: string
+      - name: description
+        type: richText
+      - name: year
+        type: number
+      - name: category
+        type: choice
+        options:
+          values: [Physics, Mathematics, Optics, Alchemy]
+    belongsTo:
+      - name: owner
+        entity: User
+    policies:
+      create:
+        - access: restricted
+          allow: User
+      read:
+        - access: public
+      update:
+        - access: restricted
+          allow: User
+          condition: self
+      delete:
+        - access: restricted
+          allow: User
+          condition: self
+
+  Principle:
+    properties:
+      - name: title
+        type: string
+      - name: statement
+        type: text
+      - name: explanation
+        type: richText
+    belongsTo:
+      - name: owner
+        entity: User
+    policies:
+      create:
+        - access: restricted
+          allow: User
+      read:
+        - access: public
+      update:
+        - access: restricted
+          allow: User
+          condition: self
+      delete:
+        - access: restricted
+          allow: User
+          condition: self
+
+
+# Health check endpoint for connection testing
+endpoints:
+  health:
+    path: /api/health
+    method: GET
+    policies: []
+    handler: healthCheck
+
+# CORS configuration
+cors:
+  enabled: true
+  config: cors.js
